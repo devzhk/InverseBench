@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 
-from utils import persistence
 import torch.nn.functional as F
 
 
@@ -18,7 +17,6 @@ def weight_init(shape, mode, fan_in, fan_out):
 #----------------------------------------------------------------------------
 # Fully-connected layer.
 
-@persistence.persistent_class
 class Linear(torch.nn.Module):
     def __init__(self, in_features, out_features, bias=True, init_mode='kaiming_normal', init_weight=1, init_bias=0):
         super().__init__()
@@ -37,7 +35,6 @@ class Linear(torch.nn.Module):
 #----------------------------------------------------------------------------
 # Convolutional layer with optional up/downsampling.
 
-@persistence.persistent_class
 class Conv2d(torch.nn.Module):
     def __init__(self,
         in_channels, out_channels, kernel, bias=True, up=False, down=False,
@@ -84,7 +81,6 @@ class Conv2d(torch.nn.Module):
 #----------------------------------------------------------------------------
 # Group normalization.
 
-@persistence.persistent_class
 class GroupNorm(torch.nn.Module):
     def __init__(self, num_channels, num_groups=32, min_channels_per_group=4, eps=1e-5):
         super().__init__()
@@ -103,7 +99,6 @@ class GroupNorm(torch.nn.Module):
 # Represents the union of all features employed by the DDPM++, NCSN++, and
 # ADM architectures.
 
-@persistence.persistent_class
 class UNetBlock(torch.nn.Module):
     def __init__(self,
         in_channels, out_channels, emb_channels, up=False, down=False, attention=False,
@@ -165,7 +160,6 @@ class UNetBlock(torch.nn.Module):
 #----------------------------------------------------------------------------
 # Timestep embedding used in the DDPM++ and ADM architectures.
 
-@persistence.persistent_class
 class PositionalEmbedding(torch.nn.Module):
     def __init__(self, num_channels, max_positions=10000, endpoint=False):
         super().__init__()
@@ -184,7 +178,6 @@ class PositionalEmbedding(torch.nn.Module):
 #----------------------------------------------------------------------------
 # Timestep embedding used in the NCSN++ architecture.
 
-@persistence.persistent_class
 class FourierEmbedding(torch.nn.Module):
     def __init__(self, num_channels, scale=16):
         super().__init__()

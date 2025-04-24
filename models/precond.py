@@ -4,6 +4,8 @@ from utils import persistence
 from models.unets import SongUNet, DhariwalUNet
 from .ddpm import UNetModel
 
+from huggingface_hub import PyTorchModelHubMixin
+
 _model_dict = {
     'DhariwalUNet': DhariwalUNet,
     'SongUNet': SongUNet, 
@@ -179,8 +181,9 @@ class iDDPMPrecond(torch.nn.Module):
 # Improved preconditioning proposed in the paper "Elucidating the Design
 # Space of Diffusion-Based Generative Models" (EDM).
 
-@persistence.persistent_class
-class EDMPrecond(torch.nn.Module):
+class EDMPrecond(torch.nn.Module, PyTorchModelHubMixin, 
+                 repo_url='https://github.com/devzhk/InverseBench', 
+                 paper_url='devzhk.github.io/InverseBench/'):
     def __init__(self,
         img_resolution,                     # Image resolution.
         img_channels,                       # Number of color channels.
@@ -220,17 +223,3 @@ class EDMPrecond(torch.nn.Module):
 
     def round_sigma(self, sigma):
         return torch.as_tensor(sigma)
-
-#----------------------------------------------------------------------------
-
-
-_precond_dict = {
-    'vp': VPPrecond,
-    've': VEPrecond,
-    'iddpm': iDDPMPrecond,
-    'edm': EDMPrecond
-}
-
-
-def get_model(name, **kwargs):
-    return _precond_dict[name.lower()](**kwargs)

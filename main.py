@@ -52,21 +52,18 @@ def main(config):
 
     logger.info(f"Loaded {len(testset)} test samples...")
     # load pre-trained model
-    ckpt_path = config.problem.prior
 
-    try:
-        with open_url(ckpt_path, 'rb') as f:
-            ckpt = pickle.load(f)
-            net = ckpt['ema'].to(device)
-    except:
-        net = instantiate(config.pretrain.model)
-        ckpt = torch.load(config.problem.prior, map_location=device)
-        # net.model.load_state_dict(ckpt)
-        if 'ema' in ckpt.keys():
-            net.load_state_dict(ckpt['ema'])
-        else:
-            net.load_state_dict(ckpt['net'])
-        net = net.to(device)
+    net = instantiate(config.pretrain.model)
+    net.from_pretrained('hzzheng/InverseBench-NS2d-diffusion-prior')
+    # ckpt = torch.load(config.problem.prior, map_location=device)
+    # # net.model.load_state_dict(ckpt)
+    # if 'ema' in ckpt.keys():
+    #     net.load_state_dict(ckpt['ema'])
+    # else:
+    #     net.load_state_dict(ckpt['net'])
+
+    # net.push_to_hub('hzzheng/InverseBench-NS2d-diffusion-prior')
+    net = net.to(device)
 
     del ckpt
     net.eval()

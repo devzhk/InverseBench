@@ -1,5 +1,6 @@
 name: navier-stokes-ds2
 prior: checkpoints/ns-5m.pt
+prior_hf_url: hzzheng/InverseBench-NS2d-diffusion-prior
 model:
   _target_: inverse_problems.navier_stokes.ForwardNavierStokes2d
   forward_time: 1.0
