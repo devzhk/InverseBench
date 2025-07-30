@@ -201,6 +201,7 @@ class EDMPrecond(torch.nn.Module):
         self.sigma_max = sigma_max
         self.sigma_data = sigma_data
         self.model = _model_dict[model_type](img_resolution=img_resolution, in_channels=img_channels, out_channels=img_channels, label_dim=label_dim, **model_kwargs)
+        self.shape = (img_channels, img_resolution, img_resolution)
 
     def forward(self, x, sigma, class_labels=None, force_fp32=False, **model_kwargs):
         x = x.to(torch.float32)
