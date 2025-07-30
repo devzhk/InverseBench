@@ -1,13 +1,16 @@
+import torch
 from abc import ABC, abstractmethod
 
 
 class Algo(ABC):
     def __init__(self, net,  # pre-trained diffusion model 
-                 forward_op  # forward operator of the inverse problem
+                 forward_op,  # forward operator of the inverse problem
+                 dtype=torch.float64,  # data type for the model
                  ):
         self.net = net
         self.forward_op = forward_op
-    
+        self.dtype = dtype
+
     @abstractmethod
     def inference(self, observation, num_samples=1, **kwargs):
         '''

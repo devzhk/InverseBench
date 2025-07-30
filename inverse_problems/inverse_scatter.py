@@ -343,21 +343,43 @@ def full_propagate_to_sensor(f, utot_dom_set, sensor_greens_function_set, dx, dy
     Propagate all the total fields to the sensors.
 
     Parameters:
-    - f: (Ny x Nx) scattering potential
+    - f: (batch_size, 1, Ny, Nx) or (Ny, Nx) scattering potential
     - utot_dom_set: (Ny x Nx x numTrans) total field inside the computational domain
     - sensor_greens_function_set: (Ny x Nx x numRec) Green's functions
-    - receiver_mask_set: (numTrans x numRec) receiver masks
     - dx, dy: sampling steps
 
     Returns:
-    - uscat_pred_set: (numTrans x numRec x numFreq) predicted scattered fields
+    - uscat_pred_set: (batch_size, numTrans, numRec) predicted scattered fields
     """
+    # Handle both batched and single sample inputs
+    if f.dim() == 4:  # Batched input: (batch_size, 1, Ny, Nx)
+        batch_size = f.shape[0]
+        f = f.squeeze(1)  # Remove channel dimension: (batch_size, Ny, Nx)
+    elif f.dim() == 2:  # Single sample: (Ny, Nx)
+        batch_size = 1
+        f = f.unsqueeze(0)  # Add batch dimension: (1, Ny, Nx)
+    else:
+        raise ValueError(f"Unexpected f dimensions: {f.shape}")
+    
     num_trans = utot_dom_set.shape[2]
     num_rec = sensor_greens_function_set.shape[2]
-    contSrc = f[0, 0].unsqueeze(-1) * utot_dom_set    # (Ny x Nx x numTrans)
-    conjSrc = torch.conj(contSrc).reshape(-1, num_trans)    # (Ny x Nx, numTrans)
-    sensor_greens_func = sensor_greens_function_set.reshape(-1, num_rec)    # (Ny x Nx, numRec)
-    uscat_pred_set = dx * dy * torch.matmul(conjSrc.T, sensor_greens_func)    # (numTrans, numRec)
+    
+    # Expand utot_dom_set for batch processing: (batch_size, Ny, Nx, numTrans)
+    utot_dom_set_expanded = utot_dom_set.unsqueeze(0).expand(batch_size, -1, -1, -1)
+    
+    # Compute contrast source for all batch elements: (batch_size, Ny, Nx, numTrans)
+    f_expanded = f.unsqueeze(-1)  # (batch_size, Ny, Nx, 1)
+    contSrc = f_expanded * utot_dom_set_expanded  # (batch_size, Ny, Nx, numTrans)
+    
+    # Reshape for matrix multiplication
+    conjSrc = torch.conj(contSrc).reshape(batch_size, -1, num_trans)  # (batch_size, Ny*Nx, numTrans)
+    sensor_greens_func = sensor_greens_function_set.reshape(-1, num_rec)  # (Ny*Nx, numRec)
+    
+    # Perform batched matrix multiplication
+    uscat_pred_set = dx * dy * torch.bmm(conjSrc.transpose(1, 2), 
+                                         sensor_greens_func.unsqueeze(0).expand(batch_size, -1, -1))
+    # Result shape: (batch_size, numTrans, numRec)
+    
     return uscat_pred_set
 
 
@@ -393,10 +415,10 @@ class InverseScatter(BaseOperator):
         f = f.to(torch.float64)
         if unnormalize:
             f = self.unnormalize(f)
-        # Linear inverse scattering
+        # Linear inverse scattering - now supports batched processing
         uscat_pred_set = full_propagate_to_sensor(f, self.uinc_dom_set[..., 0], self.sensor_greens_function_set[..., 0], 
                                                   self.dx, self.dy)
-        return uscat_pred_set.unsqueeze(0)
+        return torch.view_as_real(uscat_pred_set)
     
     def loss(self, pred, observation):
         '''
@@ -409,7 +431,7 @@ class InverseScatter(BaseOperator):
         uscat_pred_set = self.forward(pred)
         diff = uscat_pred_set - observation
         squared_diff = diff * diff.conj()
-        loss = torch.sum(squared_diff, dim=(1, 2)).to(torch.float64) # Use torch.float64 for numerical stability
+        loss = torch.sum(squared_diff.real, dim=(1, 2)).to(torch.float64) # Use torch.float64 for numerical stability
         return loss
         
     def compute_svd(self):

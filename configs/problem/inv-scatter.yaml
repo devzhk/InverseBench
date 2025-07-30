@@ -13,6 +13,7 @@ model:
   sigma_noise: 0.0001
   unnorm_shift: 1.0
   unnorm_scale: 0.5
+  svd: False
 
 data:
   _target_: training.dataset.LMDBData

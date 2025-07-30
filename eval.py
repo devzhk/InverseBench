@@ -279,6 +279,7 @@ class InverseScatter(Evaluator):
         
         metric_dict = {}
         for metric_name, metric_func in self.metric_list.items():
+            pred = pred.to(target.dtype)
             if pred.shape != target.shape:
                 val = metric_func(pred, target.repeat(pred.shape[0],1,1,1)).mean().item()
                 metric_dict[metric_name] = val

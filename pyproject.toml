@@ -1,0 +1,15 @@
+[project]
+name = "inversebench"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "h5py>=3.14.0",
+    "lmdb>=1.7.3",
+    "nvitop>=1.5.2",
+    "piq>=0.8.0",
+    "sigpy>=0.1.27",
+    "tqdm>=4.67.1",
+    "wandb>=0.21.0",
+]
