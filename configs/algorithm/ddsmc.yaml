@@ -36,7 +36,8 @@ method:
     sigma_final: 0
     schedule: 'linear'
     timestep: 'poly-7'
-
+  
+  # This is only used if recon_fn="ode"
   diffusion_scheduler_config:
     num_steps: 10
     sigma_min: 0.01
