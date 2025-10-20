@@ -1,0 +1,46 @@
+##
+# Hyperparameters have been optimized using the Tweedie reconstruction
+# annealing scheduler was chosen based on default from MCGDiff. It was tested on val set to give reasonable PSNR values
+# number of particles was chosen as 16 as it is the number used with MCGDiff according to the Inverse Bench paper (table 12)
+# The rho scheduler was optimized with Bayesian optimization from wandb, using the validation set (10 samples).
+# Optimization was performed separately for numRec=360, 180, 60. They were optimized using recon_fn="tweedie"
+# For each numRec, optimzation was performed three times: with eta = 0, 0.5, 1.0 fixed in the different runs
+# For each combination of numRec+eta, a maximum number of runs of 100 were used
+# The numbers optimized were sigma_min and sigma_max. 
+# The eta value was then chosen based on the best run 
+# Below, values are given for numRec=360, and as a comment the values for numRec 360/180/60
+##
+name: DDSMC
+method:
+  _target_: algo.ddsmc.DDSMC
+  verbose: True
+
+  eta: 0.5  # 0.5/1.0/1.0
+  recon_fn: "tweedie"
+  smc_config:
+    resampling_method: "multinomial"
+    num_particles: 16
+  
+  annealing_scheduler_config:
+    num_steps: 200
+    sigma_max: 100
+    sigma_min: 0.01
+    sigma_final: 0
+    schedule: 'linear'
+    timestep: 'poly-7'
+
+  rho_scheduler_config:
+    num_steps: 200
+    sigma_max: 47    # 47/40/48
+    sigma_min: 0.01  # 0.01/0.01/0.01  # these numbers have been rounded
+    sigma_final: 0
+    schedule: 'linear'
+    timestep: 'poly-7'
+  
+  # This is only used if recon_fn="ode"
+  diffusion_scheduler_config:
+    num_steps: 10
+    sigma_min: 0.01
+    sigma_final: 0
+    schedule: 'linear'
+    timestep: 'poly-7'
