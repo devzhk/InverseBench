@@ -11,11 +11,18 @@ Abstract: *Plug-and-play diffusion priors (PnPDP) have emerged as a promising re
 ![](assets/teaser.png)
 
 ## Environment requirements
-- We recommend Linux with 64-bit Python 3.11 for the best compatiblity.
+- We recommend Linux with 64-bit Python 3.10-3.11 for the best compatiblity.
 - At least one high-end GPU for inference. All our experiments were conducted on A100 GPUs. 
 - The main dependencies are `pytorch, scipy, hydra-core, lmdb, piq, wandb, accelerate, devito, dask, ehtim, ehtplot, h5py, sigpy, pynfft, pytest`. 
 - Note: `pynfft` is required for the black hole imaging task and is only compatible with `numpy 1.xx`. If you encounter numpy compatibility issues, a simple workaround is to create a separate conda environment for black hole imaging.([issue #3](https://github.com/devzhk/InverseBench/issues/3))
-- We also provide [Dockerfile](Docker/Dockerfile) under `Docker`, offering the best compatibility for all five tasks. It can be used as follows:
+### UV
+We recommend using [uv](https://docs.astral.sh/uv/getting-started/installation/) to manage the environment. After installing uv, you can run the following command to install the dependencies:
+```bash
+uv sync
+```
+
+### Docker
+We also provide [Dockerfile](Docker/Dockerfile) under `Docker`, offering the best compatibility for all five tasks. It can be used as follows:
 ```bash
 # Build docker image
 docker build -t [image tag] --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) .

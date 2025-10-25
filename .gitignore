@@ -10,3 +10,4 @@ data
 figs
 *.ipynb
 cache
+.venv
