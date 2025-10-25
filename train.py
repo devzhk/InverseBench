@@ -1,7 +1,6 @@
 import os
 from omegaconf import OmegaConf
 import copy
-import pickle
 import hydra
 from hydra.utils import instantiate
 
@@ -127,8 +126,6 @@ def main(config):
                     "optimizer": optimizer.state_dict(),
                     "scheduler": scheduler.state_dict(),
                 }
-                with open(os.path.join(ckpt_dir, f"ema_{training_steps}.pkl"), "wb") as f:
-                    pickle.dump({"ema": ema_net}, f)
                 torch.save(
                     save_dict, os.path.join(ckpt_dir, f"ckpt_{training_steps}.pt")
                 )

@@ -3,7 +3,6 @@ This file implements the loss functions used in the training of the diffusion mo
 '''
 
 import torch
-from utils import persistence
 from piq import psnr, SSIMLoss
 
 #----------------------------------------------------------------------------
@@ -11,7 +10,6 @@ from piq import psnr, SSIMLoss
 # from the paper "Score-Based Generative Modeling through Stochastic
 # Differential Equations".
 
-@persistence.persistent_class
 class VPLoss:
     def __init__(self, beta_d=19.9, beta_min=0.1, epsilon_t=1e-5):
         self.beta_d = beta_d
@@ -37,7 +35,6 @@ class VPLoss:
 # from the paper "Score-Based Generative Modeling through Stochastic
 # Differential Equations".
 
-@persistence.persistent_class
 class VELoss:
     def __init__(self, sigma_min=0.02, sigma_max=100):
         self.sigma_min = sigma_min
@@ -57,7 +54,6 @@ class VELoss:
 # Improved loss function proposed in the paper "Elucidating the Design Space
 # of Diffusion-Based Generative Models" (EDM).
 
-@persistence.persistent_class
 class EDMLoss:
     def __init__(self, P_mean=-1.2, P_std=1.2, sigma_data=0.5):
         self.P_mean = P_mean
@@ -111,7 +107,6 @@ class DynamicRangeSSIMLoss:
             ys = torch.view_as_complex(ys.permute(0, 2, 3, 1).contiguous()).type(torch.complex128).abs().unsqueeze(1)
         return torch.mean(torch.stack([SSIMLoss(data_range=y.max())(yhat.clip(0, y.max()).unsqueeze(0), y.unsqueeze(0)) for yhat, y in zip(yhats, ys)]))
 
-@persistence.persistent_class
 class MRILoss:
     def __init__(self, forward_op, loss_type='psnr_loss', target_type='mvue_abs'):
         self.forward_op = forward_op

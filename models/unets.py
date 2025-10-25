@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 
-from utils import persistence
 from torch.nn.functional import silu
 
 from models.modules import Linear, Conv2d, GroupNorm, PositionalEmbedding, FourierEmbedding, UNetBlock
@@ -12,7 +11,6 @@ from models.modules import Linear, Conv2d, GroupNorm, PositionalEmbedding, Fouri
 # Equations". Equivalent to the original implementation by Song et al.,
 # available at https://github.com/yang-song/score_sde_pytorch
 
-@persistence.persistent_class
 class SongUNet(torch.nn.Module):
     def __init__(self,
         img_resolution,                     # Image resolution at input/output.
@@ -155,7 +153,6 @@ class SongUNet(torch.nn.Module):
 # original implementation by Dhariwal and Nichol, available at
 # https://github.com/openai/guided-diffusion
 
-@persistence.persistent_class
 class DhariwalUNet(torch.nn.Module):
     def __init__(self,
         img_resolution,                     # Image resolution at input/output.

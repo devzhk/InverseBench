@@ -1,6 +1,5 @@
 import numpy as np
 import torch
-from utils import persistence
 from models.unets import SongUNet, DhariwalUNet
 from .ddpm import UNetModel
 
@@ -16,7 +15,6 @@ _model_dict = {
 # from the paper "Score-Based Generative Modeling through Stochastic
 # Differential Equations".
 
-@persistence.persistent_class
 class VPPrecond(torch.nn.Module):
     def __init__(self,
         img_resolution,                 # Image resolution.
@@ -75,7 +73,6 @@ class VPPrecond(torch.nn.Module):
 # from the paper "Score-Based Generative Modeling through Stochastic
 # Differential Equations".
 
-@persistence.persistent_class
 class VEPrecond(torch.nn.Module):
     def __init__(self,
         img_resolution,                 # Image resolution.
@@ -119,7 +116,6 @@ class VEPrecond(torch.nn.Module):
 # Preconditioning corresponding to improved DDPM (iDDPM) formulation from
 # the paper "Improved Denoising Diffusion Probabilistic Models".
 
-@persistence.persistent_class
 class iDDPMPrecond(torch.nn.Module):
     def __init__(self,
         img_resolution,                     # Image resolution.
@@ -179,7 +175,6 @@ class iDDPMPrecond(torch.nn.Module):
 # Improved preconditioning proposed in the paper "Elucidating the Design
 # Space of Diffusion-Based Generative Models" (EDM).
 
-@persistence.persistent_class
 class EDMPrecond(torch.nn.Module):
     def __init__(self,
         img_resolution,                     # Image resolution.
