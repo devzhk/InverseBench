@@ -6,9 +6,22 @@
 Hongkai Zheng*, Wenda Chu*, Bingliang Zhang*, Zihui Wu*, Austin Wang, Berthy T. Feng, Caifeng Zou, Yu Sun, Nikola Kovachki, Zachary E. Ross, Katherine L. Bouman, Yisong Yue  
 (*: Equal contribution)
 
-Abstract: *Plug-and-play diffusion priors (PnPDP) have emerged as a promising research direction for solving inverse problems. 
+Abstract: *Plug-and-play diffusion priors (PnPDP) have emerged as a promising research direction for solving inverse problems.
  However, current studies primarily focus on natural image restoration, leaving the performance of these algorithms in scientific inverse problems largely unexplored. To address this gap, we introduce **InverseBench**, a framework that evaluates diffusion models across five distinct scientific inverse problems. These problems present unique structural challenges that differ from existing benchmarks, arising from critical scientific applications such as optical tomography, medical imaging, black hole imaging, seismology, and fluid dynamics. With **InverseBench**, we benchmark 14 inverse problem algorithms that use plug-and-play diffusion priors against strong, domain-specific baselines, offering valuable new insights into the strengths and weaknesses of existing algorithms.*
 ![](assets/teaser.png)
+
+## Table of Contents
+- [Environment requirements](#environment-requirements)
+  - [UV](#uv)
+  - [Docker](#docker)
+- [Pre-trained models](#pre-trained-models)
+- [Data](#data)
+- [Inference](#inference)
+- [Hyperparameter search](#hyperparameter-search)
+- [License](#license)
+- [Citation](#citation)
+- [Troubleshooting](#troubleshooting)
+
 
 ## Environment requirements
 - We recommend Linux with 64-bit Python 3.10-3.11 for the best compatiblity.
