@@ -33,6 +33,10 @@ We recommend using [uv](https://docs.astral.sh/uv/getting-started/installation/)
 ```bash
 uv sync
 ```
+Once the dependencies are installed, you can run the following command to activate the environment:
+```bash
+source .venv/bin/activate
+```
 
 ### Docker
 We also provide [Dockerfile](Docker/Dockerfile) under `Docker`, offering the best compatibility for all five tasks. It can be used as follows:
