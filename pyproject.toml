@@ -5,6 +5,8 @@ description = "InverseBench env"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    # Devito 4.8.x expects pre-dataclass codepy; 2025.x breaks GCCToolchain.__init__
+    "codepy>=2023.1,<2025",
     "accelerate>=1.11.0",
     "dask>=2025.10.0",
     "devito==4.8.12",
@@ -17,6 +19,7 @@ dependencies = [
     "numpy>=2.2.6",
     "nvitop>=1.5.3",
     "piq>=0.8.0",
+    "pytest>=8.0.0",
     "sigpy>=0.1.27",
     "torch>=2.9.0",
     "torchvision>=0.24.0",
