@@ -184,11 +184,15 @@ def fwi_norm(x):
 
 
 class AcousticWave(Evaluator):
-    def __init__(self, forward_op=None):
+    def __init__(self, forward_op=None, data_misfit=False):
         metric_list = {'relative l2': relative_l2, 
                        'psnr': lambda x, y: psnr(fwi_norm(x).clip(0, 1), fwi_norm(y).clip(0, 1), data_range=1.0, reduction='none'),
                        'ssim': lambda x, y: ssim(fwi_norm(x).clip(0, 1), fwi_norm(y).clip(0, 1), data_range=1.0, reduction='none')}
-        super(AcousticWave, self).__init__(metric_list, forward_op)
+        super(AcousticWave, self).__init__(
+            metric_list,
+            forward_op=forward_op,
+            data_misfit=data_misfit,
+        )
 
     def __call__(self, pred, target, observation=None):
         '''
@@ -198,7 +202,7 @@ class AcousticWave(Evaluator):
         Returns:
             - metric_dict (Dict): a dictionary of metric values
         '''
-        metric_dict = {'data misfit': 0.0}
+        metric_dict = {}
         for metric_name, metric_func in self.metric_list.items():
             if len(target.shape) == 3:
                 val = metric_func(pred, target).item()
@@ -208,11 +212,10 @@ class AcousticWave(Evaluator):
                 val = metric_func(pred, target).mean().item()
                 metric_dict[metric_name] = val
                 self.metric_state[metric_name].append(val)
-                self.metric_state[metric_name].append(val)
-        
-        data_misfit = self.eval_data_misfit(pred, observation).mean().item()
-        metric_dict['data misfit']= data_misfit
-        self.metric_state['data misfit'].append(data_misfit)
+        if self.data_misfit:
+            dm = self.eval_data_misfit(pred, observation).mean().item()
+            metric_dict['data misfit'] = dm
+            self.metric_state['data misfit'].append(dm)
         return metric_dict
     
     
