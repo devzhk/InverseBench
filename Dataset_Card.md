@@ -42,10 +42,10 @@ We use three samples from the validation set to tune hyperparameters for each al
 | Data split | Number of entries | 
 | ---------- | ----------------- | 
 | Train      | 25,012            | 
-| Test       | 94                | 
+| Test       | 96                | 
 | Validation | 6                 | 
 
-We use six samples from the validation set to tune hyperparameters for each algorithm and 94 test samples for reporting the results.
+We use six samples from the validation set to tune hyperparameters for each algorithm and 96 test samples for reporting the results.
 
 ## Data for black hole imaging
 

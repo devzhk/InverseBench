@@ -30,70 +30,17 @@ InverseBench is built around four core abstractions that interact through a clea
 
 ```mermaid
 flowchart TB
-    subgraph Config ["Configuration Layer (Hydra YAML)"]
-        direction LR
-        PC["configs/problem/\n(forward model, data, evaluator)"]
-        AC["configs/algorithm/\n(solver parameters)"]
-        MC["configs/pretrain/\n(diffusion model weights)"]
-    end
+    FG[Forward Model.]
 
-    subgraph Core ["Core Components"]
-        direction TB
+    DP[Diffusion Prior.]
 
-        subgraph FO ["Forward Operator (inverse_problems/)"]
-            direction TB
-            BO["BaseOperator\n- forward(x) → y\n- gradient(pred, obs)\n- loss(pred, obs)\n- normalize / unnormalize"]
-            FWI["acoustic.py\nFull Waveform\nInversion"]
-            NS["navier_stokes.py\n2D Navier-Stokes"]
-            IS["inverse_scatter.py\nOptical\nTomography"]
-            MRI["multi_coil_mri.py\nMulti-coil MRI"]
-            BH["blackhole.py\nBlack Hole\nImaging"]
-            BO --> FWI & NS & IS & MRI & BH
-        end
+    AL[PnPDP Algorithm. input: observation y; output: reconstructed samples]
 
-        subgraph AL ["Algorithms (algo/)"]
-            direction TB
-            BA["Algo\n- inference(obs) → recon"]
-            DPS["DPS"]
-            DAPS["DAPS"]
-            DDNM["DDNM"]
-            EKI["EKI"]
-            MORE["... 10 more"]
-            BA --> DPS & DAPS & DDNM & EKI & MORE
-        end
+    EV[Evaluator. input: ground truth + predictions; output: dict of metrics]
 
-        subgraph DM ["Diffusion Model (models/)"]
-            direction TB
-            DDPM["DDPM + UNet\nLearned prior p(x)"]
-            SCHED["Scheduler\n(VP / VE / EDM\nnoise schedules)"]
-            DDPM --- SCHED
-        end
-
-        subgraph EV ["Evaluator (eval.py)"]
-            direction TB
-            EVB["Evaluator base\n- __call__(pred, target)\n- compute() → mean/std"]
-            EV1["AcousticWave\n(rel. L2, PSNR,\nSSIM, data misfit)"]
-            EV2["NavierStokes2d\n(relative L2)"]
-            EV3["InverseScatter\n(PSNR, SSIM)"]
-            EV4["MRI\n(DR-PSNR, DR-SSIM)"]
-            EV5["BlackHole\n(chi-sq, blur PSNR)"]
-            EVB --> EV1 & EV2 & EV3 & EV4 & EV5
-        end
-    end
-
-    subgraph Pipeline ["Inference Pipeline (main.py)"]
-        direction LR
-        D["Load Dataset"] --> OBS["y = A(x) + noise"]
-        OBS --> SOLVE["x̂ = algo.inference(y)"]
-        SOLVE --> EVAL["evaluator(x̂, x)"]
-        EVAL --> RES["Aggregate Metrics\n& Log to wandb"]
-    end
-
-    Config --> Core
-    FO -- "forward model A" --> AL
-    DM -- "diffusion prior" --> AL
-    AL -- "reconstructions" --> EV
-    Core --> Pipeline
+    FG --> AL
+    DP --> AL
+    AL --> EV
 ```
 
 **Key design principles:**
@@ -142,7 +89,7 @@ Pre-trained model weights can be found in the [GitHub release](https://github.co
 | Linear inverse scattering| `in-scatter-5m.pt`| `configs/pretrain/inv-scatter.yaml`|
 | 2D Navier-Stokes | `ns-5m.pt`| `configs/pretrain/navier-stokes.yaml` |
 | Black hole | `blackhole.pt` | `configs/pretrain/blackhole.yaml`|
-|MRI (brain) | `mri-brain.pt`| `configs/pretrain/brain-knee-mvue.yaml`|
+|MRI (brain) | `mri-brain.pt`| `configs/pretrain/mri-brain-mvue.yaml`|
 |MRI (knee) | `mri-knee.pt`| `configs/pretrain/mri-knee-mvue.yaml`|
 |FFHQ256 |  `ffhq256.pt` | `configs/pretrain/ffhq256.yaml`|
 
