@@ -57,8 +57,8 @@ class LangevinDynamics:
             optimizer.zero_grad()
 
             gradient = operator.gradient(x, measurement) / (2 * self.tau ** 2)
-            gradient += (x - x0hat) / sigma ** 2
-            x.grad = gradient
+            gradient += (x.detach() - x0hat) / sigma ** 2
+            x.grad = gradient.detach()
 
             optimizer.step()
             with torch.no_grad():
@@ -67,9 +67,13 @@ class LangevinDynamics:
 
             # early stopping with NaN
             if torch.isnan(x).any():
-                return torch.zeros_like(x)
+                out = torch.zeros_like(x)
+                x.grad = None
+                return out
 
-        return x.detach()
+        out = x.detach()
+        x.grad = None
+        return out
     
     def get_lr(self, ratio):
         """
@@ -140,4 +144,3 @@ class DAPS(Algo):
             xt = x0y + torch.randn_like(x0y) * self.annealing_scheduler.sigma_steps[step + 1]
 
         return xt
-
