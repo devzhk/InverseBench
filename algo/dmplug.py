@@ -28,8 +28,7 @@ class DMPlug(Algo):
                  weight_decay=0.0,
                  loss_scaling='residual',
                  solver='euler',
-                 grad_check_interval=0,
-                 trace_interval=0):
+                 ):
         super(DMPlug, self).__init__(net, forward_op)
         self.net.eval().requires_grad_(False)
         self.diffusion_scheduler_config = diffusion_scheduler_config
@@ -41,8 +40,6 @@ class DMPlug(Algo):
         self.weight_decay = weight_decay
         self.loss_scaling = loss_scaling
         self.solver = solver
-        self.grad_check_interval = grad_check_interval
-        self.trace_interval = trace_interval
         if self.loss_scaling not in {'residual', 'mse', 'none'}:
             raise ValueError("loss_scaling must be one of {'residual', 'mse', 'none'}")
 

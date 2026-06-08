@@ -3,9 +3,6 @@ method:
   _target_: algo.dmplug.DMPlug
 
   diffusion_scheduler_config:
-    # DMPlug backpropagates through the full reverse sampler each optimizer step.
-    # Keep this much smaller than DPS's 1000 steps for cost, but 3 VP steps is
-    # numerically too coarse and leaves strong noise artifacts.
     num_steps: 18
     schedule: 'vp'
     timestep: 'vp'
@@ -16,13 +13,6 @@ method:
   weight_decay: 0.0
   iteration: 1000
   solver: euler
-  # mse: upstream DMPlug-style mean squared measurement error
-  # residual: DPS-style normalized sqrt(loss) update
-  # none: use forward_op.gradient exactly, matching inversebench's operator loss
-  # For multi-coil MRI, mse usually needs a much larger guidance_scale.
+
   loss_scaling: mse
-  # Set to e.g. 100 to compare the manual VJP with direct objective.backward().
-  grad_check_interval: 0
-  # Save loss/eval histories and reconstructed tensors every N optimization iterations.
-  # Set to 0 to disable tracing.
-  trace_interval: 100
+
