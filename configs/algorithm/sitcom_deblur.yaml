@@ -1,0 +1,20 @@
+name: SITCOM_DEBLUR
+
+method:
+  _target_: algo.sitcom.SITCOM
+  annealing_scheduler_config:
+    num_steps: 29
+    sigma_max: 100
+    sigma_min: 0.1
+    sigma_final: 0
+    schedule: 'linear'
+    timestep: 'poly-7'
+  diffusion_scheduler_config:
+    num_steps: 5
+    sigma_min: 0.01
+    sigma_final: 0
+    schedule: 'linear'
+    timestep: 'poly-7'
+  num_inner_steps: 20
+  learning_rate: 0.006
+  noise_level: 0.000001
