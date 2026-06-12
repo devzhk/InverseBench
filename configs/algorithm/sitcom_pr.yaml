@@ -3,7 +3,7 @@ name: SITCOM_PR
 method:
   _target_: algo.sitcom.SITCOM
   annealing_scheduler_config:
-    num_steps: 35
+    num_steps: 40
     sigma_max: 80        
     sigma_min: 0.1
     sigma_final: 0
@@ -15,7 +15,7 @@ method:
     sigma_final: 0
     schedule: 'linear'
     timestep: 'poly-7'
-  num_inner_steps: 23
+  num_inner_steps: 25
   learning_rate: 0.01
-  noise_level: 0.000001
+  noise_level: 0.001
   loss_weight: 1.0      

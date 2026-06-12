@@ -54,20 +54,22 @@ class SITCOM(Algo):
             sigma      = self.annealing_scheduler.sigma_steps[step]
             sigma_next = self.annealing_scheduler.sigma_steps[step + 1]
 
-            dsc = self.diffusion_scheduler_config
-            diffusion_scheduler = Scheduler(
-                num_steps=int(dsc.num_steps),
-                sigma_max=float(sigma),
-                sigma_min=float(dsc.sigma_min),
-                sigma_final=float(dsc.sigma_final),
-                schedule=str(dsc.schedule),
-                timestep=str(dsc.timestep),
-            )
-            sampler = DiffusionSampler(diffusion_scheduler)
-            with torch.no_grad():
-                x0hat = sampler.sample(self.net, xt, SDE=False, verbose=False)
+            if sigma >= self.measurement_start_sigma:
+                dsc = self.diffusion_scheduler_config
+                diffusion_scheduler = Scheduler(
+                    num_steps=int(dsc.num_steps),
+                    sigma_max=float(sigma),
+                    sigma_min=float(dsc.sigma_min),
+                    sigma_final=float(dsc.sigma_final),
+                    schedule=str(dsc.schedule),
+                    timestep=str(dsc.timestep),
+                )
+                sampler = DiffusionSampler(diffusion_scheduler)
+                with torch.no_grad():
+                    x0hat = sampler.sample(self.net, xt, SDE=False, verbose=False)
+                pred_x0 = x0hat 
 
-            if sigma < self.measurement_start_sigma:
+            else:
                 xt_opt = xt.detach().clone().requires_grad_(True)
                 optimizer = torch.optim.Adam([xt_opt], lr=self.lr)
 
@@ -89,11 +91,9 @@ class SITCOM(Algo):
                         xt_opt.detach(),
                         torch.as_tensor(sigma).to(device)
                     ).clamp(-1, 1)
-            else:
 
-                pred_x0 = x0hat
-
-            xt = pred_x0 + torch.randn_like(pred_x0) * (sigma_next + self.noise_level)
+            xt = pred_x0 + torch.randn_like(pred_x0) * (sigma + self.noise_level)        
+            xt = pred_x0 + torch.randn_like(pred_x0) * (sigma_next + self.noise_level)  
 
             with torch.no_grad():
                 display_loss = self.forward_op.loss(pred_x0, observation).sum().sqrt()
