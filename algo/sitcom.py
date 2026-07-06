@@ -67,7 +67,7 @@ class SITCOM(Algo):
                 sampler = DiffusionSampler(diffusion_scheduler)
                 with torch.no_grad():
                     x0hat = sampler.sample(self.net, xt, SDE=False, verbose=False)
-                pred_x0 = x0hat 
+                pred_x0 = x0hat
 
             else:
                 xt_opt = xt.detach().clone().requires_grad_(True)
@@ -80,10 +80,9 @@ class SITCOM(Algo):
                             xt_opt,
                             torch.as_tensor(sigma).to(device)
                         ).clamp(-1, 1)
-                        meas = self.forward_op.forward(pred_x0)
-                        loss = self.loss_weight * (meas - observation).square().flatten(start_dim=1).sum()
+                        loss = self.loss_weight * self.forward_op.loss(pred_x0, observation).sum()
 
-                    loss.backward(retain_graph=True)
+                    xt_opt.grad = torch.autograd.grad(loss, xt_opt)[0]
                     optimizer.step()
 
                 with torch.no_grad():
@@ -92,8 +91,7 @@ class SITCOM(Algo):
                         torch.as_tensor(sigma).to(device)
                     ).clamp(-1, 1)
 
-            xt = pred_x0 + torch.randn_like(pred_x0) * (sigma + self.noise_level)        
-            xt = pred_x0 + torch.randn_like(pred_x0) * (sigma_next + self.noise_level)  
+            xt = pred_x0 + torch.randn_like(pred_x0) * (sigma_next + self.noise_level)
 
             with torch.no_grad():
                 display_loss = self.forward_op.loss(pred_x0, observation).sum().sqrt()

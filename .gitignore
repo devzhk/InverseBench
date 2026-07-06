@@ -10,5 +10,4 @@ data
 figs
 *.ipynb
 cache
-.venv*.txt
-*.txt
+.venv

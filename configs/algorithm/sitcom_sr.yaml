@@ -3,8 +3,8 @@ name: SITCOM_SR
 method:
   _target_: algo.sitcom.SITCOM
   annealing_scheduler_config:
-    num_steps: 34       
-    sigma_max: 80        
+    num_steps: 34
+    sigma_max: 80
     sigma_min: 0.1
     sigma_final: 0
     schedule: 'linear'
@@ -19,4 +19,4 @@ method:
   learning_rate: 0.005
   noise_level: 0.001
   loss_weight: 50.0
-  measurement_start_sigma: 20.0   
+  measurement_start_sigma: 20.0
