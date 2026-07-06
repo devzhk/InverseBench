@@ -51,13 +51,13 @@ class LangevinDynamics:
         pbar = tqdm.trange(self.num_steps) if verbose else range(self.num_steps)
         lr = self.get_lr(ratio)
         x0hat = x0hat.detach()
-        x = x0hat.clone().detach().requires_grad_(True)
+        x = x0hat.clone()
         optimizer = torch.optim.SGD([x], lr)
         for _ in pbar:
             optimizer.zero_grad()
 
             gradient = operator.gradient(x, measurement) / (2 * self.tau ** 2)
-            gradient += (x.detach() - x0hat) / sigma ** 2
+            gradient += (x - x0hat) / sigma ** 2
             x.grad = gradient.detach()
 
             optimizer.step()
