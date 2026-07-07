@@ -15,4 +15,3 @@ method:
   solver: euler
 
   loss_scaling: mse
-
