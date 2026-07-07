@@ -1,0 +1,46 @@
+name: SITCOM
+
+method:
+  _target_: algo.sitcom.SITCOM
+
+  # Default example: FFHQ deblurring.
+  annealing_scheduler_config:
+    num_steps: 34
+    sigma_max: 100
+    sigma_min: 0.1
+    sigma_final: 0
+    schedule: 'linear'
+    timestep: 'poly-7'
+
+  diffusion_scheduler_config:
+    num_steps: 5
+    sigma_min: 0.01
+    sigma_final: 0
+    schedule: 'linear'
+    timestep: 'poly-7'
+
+  num_inner_steps: 24
+  learning_rate: 0.006
+  noise_level: 0.001
+  loss_weight: 1.0
+
+# Suggested task overrides:
+#
+# Inpainting:
+#   annealing_scheduler_config.num_steps=25
+#   num_inner_steps=22
+#   learning_rate=0.01
+#
+# Phase retrieval:
+#   annealing_scheduler_config.num_steps=40
+#   annealing_scheduler_config.sigma_max=80
+#   diffusion_scheduler_config.num_steps=20
+#   num_inner_steps=25
+#   learning_rate=0.01
+#
+# Super-resolution:
+#   annealing_scheduler_config.sigma_max=80
+#   num_inner_steps=16
+#   learning_rate=0.005
+#   loss_weight=50.0
+#   measurement_start_sigma=20.0

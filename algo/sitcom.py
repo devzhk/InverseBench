@@ -80,9 +80,13 @@ class SITCOM(Algo):
                             xt_opt,
                             torch.as_tensor(sigma).to(device)
                         ).clamp(-1, 1)
-                        loss = self.loss_weight * self.forward_op.loss(pred_x0, observation).sum()
+                        gradient = self.forward_op.gradient(pred_x0, observation)
 
-                    xt_opt.grad = torch.autograd.grad(loss, xt_opt)[0]
+                    xt_opt.grad = self.loss_weight * torch.autograd.grad(
+                        outputs=pred_x0,
+                        inputs=xt_opt,
+                        grad_outputs=gradient,
+                    )[0]
                     optimizer.step()
 
                 with torch.no_grad():
