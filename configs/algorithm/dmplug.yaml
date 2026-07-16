@@ -1,0 +1,17 @@
+name: DMPlug
+method:
+  _target_: algo.dmplug.DMPlug
+
+  diffusion_scheduler_config:
+    num_steps: 18
+    schedule: 'vp'
+    timestep: 'vp'
+    scaling: 'vp'
+
+  guidance_scale: 1.0
+  lr: 1e-2
+  weight_decay: 0.0
+  iteration: 1000
+  solver: euler
+
+  loss_scaling: mse
